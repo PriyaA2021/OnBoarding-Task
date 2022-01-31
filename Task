@@ -1,0 +1,21 @@
+
+a) Display a list of all property names and their property id’s for Owner Id: 1426
+
+Select property.Name , property.id
+from Property 
+inner join OwnerProperty on  OwnerProperty.PropertyId = property.id 
+where OwnerProperty.OwnerId =1426
+
+b) Display the current home value for each property in question a)
+
+SELECT Property.Name, PropertyHomeValue.Value
+FROM     OwnerProperty 
+INNER JOIN Property ON OwnerProperty.PropertyId = Property.Id 
+INNER JOIN PropertyHomeValue ON Property.Id = PropertyHomeValue.PropertyId
+WHERE  (OwnerProperty.OwnerId = 1426)
+
+c) For each property in question a), return the following:                                                                      
+Using rental payment amount, rental payment frequency, tenant start date and tenant end date to write a query that returns the sum of all payments from start date to end date. 
+
+
+Display the yield. 
