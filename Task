@@ -19,3 +19,24 @@ Using rental payment amount, rental payment frequency, tenant start date and ten
 
 
 Display the yield. 
+
+
+d) Display all the jobs available
+
+SELECT Job.PropertyId, JobStatus.Id as IsActive, Job.Id as JobID, Job.JobDescription,  JobStatus.Status 
+FROM Job
+INNER JOIN JobMedia ON JobMedia.JobId = Job.Id 
+INNER JOIN JobStatus ON Job.JobStatusId = JobStatus.Id
+WHERE  (JobStatus.Status = N'Open') AND (JobStatusId = 1)
+
+e) Display all property names, current tenants first and last names and rental payments per week/ fortnight/month for the properties in question a)
+
+select p.Name as PropertyName, CONCAT(FirstName, ' ', LastName) as TenantName, TP.PaymentAmount as Rent, F.Name as PaymentFrequency
+from dbo.OwnerProperty as OP
+INNER JOIN dbo.TenantProperty as TP on OP.PropertyId = TP.PropertyId
+INNER JOIN dbo.Property as P on p.Id = TP.PropertyId
+INNER JOIN dbo.TenantPaymentFrequencies as F on F.Id = TP.PaymentFrequencyId
+
+INNER JOIN dbo.Person PE on PE.Id = TP.TenantId
+Where OP.OwnerId = 1426
+
