@@ -1,44 +1,67 @@
 
 a) Display a list of all property names and their property id’s for Owner Id: 1426
 
-SELECT Property.Name, OwnerProperty.PropertyId, OwnerProperty.OwnerId
-FROM Property
-INNER JOIN OwnerProperty ON Property.Id = OwnerProperty.PropertyId
-WHERE  (OwnerProperty.OwnerId = 1426)
+SELECT pr.Name, op.PropertyId, op.OwnerId
+FROM Property pr
+INNER JOIN OwnerProperty op ON Pr.Id = op.PropertyId
+WHERE  (op.OwnerId = 1426)
 
 
 b) Display the current home value for each property in question a)
 
-SELECT Property.Name, PropertyHomeValue.Value
-FROM OwnerProperty 
-INNER JOIN Property ON OwnerProperty.PropertyId = Property.Id 
-INNER JOIN PropertyHomeValue ON Property.Id = PropertyHomeValue.PropertyId
-WHERE  (OwnerProperty.OwnerId = 1426)
+SELECT pr.Name, phv.Value
+FROM OwnerProperty op
+INNER JOIN Property pr ON op.PropertyId = pr.Id 
+INNER JOIN PropertyHomeValue phv ON Pr.Id = phv.PropertyId
+WHERE  (op.OwnerId = 1426)
 
-c) For each property in question a), return the following:                                                                      
+c)i) For each property in question a), return the following:                                                                      
 Using rental payment amount, rental payment frequency, tenant start date and tenant end date to write a query that returns the sum of all payments from start date to end date. 
 
+SELECT pr.Name as PropertyName,op.propertyid as PropertyID,  tp.startdate as StartDate,tp.enddate as EndDate, tpf.name as TenantPaymentFrequencies,prp.amount as RentalPaymentAmount,
 
-Display the yield. 
+CAST(ROUND(((CASE
+
+WHEN tpf.Name = 'Weekly' THEN prp.Amount*52
+	 
+WHEN tpf.Name = 'Fortnightly' THEN prp.Amount*26
+	 
+WHEN tpf.Name = 'Monthly' THEN prp.Amount*12
+
+ELSE null END)/52)*DATEDIFF(Week,tp.StartDate,tp.EndDate),0) as int) as TotalPayment
+
+
+from OwnerProperty op
+
+INNER JOIN Property pr on op.PropertyId = pr.Id
+INNER JOIN PropertyRentalPayment prp on prp.PropertyId = pr.id
+INNER JOIN PropertyHomeValue phv on phv.PropertyId = pr.Id
+INNER JOIN TenantProperty tp on tp.PropertyId =pr.Id
+INNER JOINn TenantPaymentFrequencies tpf on tpf.id = tp.PaymentFrequencyId
+where ownerid = 1426
+
+
+ii) Display the yield. 
+
 
 
 d) Display all the jobs available
 
-SELECT Job.PropertyId, Job.JobDescription, JobStatus.Status, JobMedia.IsActive, JobMedia.JobId
-FROM Job
-INNER JOIN JobMedia ON Job.Id = JobMedia.JobId
-INNER JOIN JobStatus ON Job.JobStatusId = JobStatus.Id
-WHERE  (JobStatus.Status = N'Open') AND (JobMedia.IsActive = 1)
+SELECT jo.PropertyId, jo.JobDescription, js.Status, jm.IsActive, jm.JobId
+FROM Job Jo
+INNER JOIN JobMedia jm ON Jo.Id = jm.JobId
+INNER JOIN JobStatus js ON Jo.JobStatusId = js.Id
+WHERE  (js.Status = N'Open') AND (jm.IsActive = 1)
 
 
 e) Display all property names, current tenants first and last names and rental payments per week/ fortnight/month for the properties in question a)
 
-SELECT Property.Name as PropertyName, CONCAT(Person.FirstName,' ' ,Person.LastName) as TenantName, TenantProperty.PaymentAmount,  TenantPaymentFrequencies.Name as PaymentFrequency
-FROM   OwnerProperty 
-INNER JOIN TenantProperty ON  OwnerProperty.PropertyId = TenantProperty.propertyid
-INNER JOIN Property ON Property.Id = OwnerProperty.PropertyId 
-INNER JOIN TenantPaymentFrequencies ON TenantPaymentFrequencies.Id = TenantProperty.paymentfrequencyid
-INNER JOIN Person ON Person.Id = TenantProperty.TenantId
+SELECT pr.Name as PropertyName, CONCAT(Per.FirstName,' ' ,Per.LastName) as TenantName, tp.PaymentAmount,  tpf.Name as PaymentFrequency
+FROM   OwnerProperty op
+INNER JOIN TenantProperty tp ON op.PropertyId = tp.propertyid
+INNER JOIN Property pr ON pr.Id = opy.PropertyId 
+INNER JOIN TenantPaymentFrequencies tpf ON tpf.Id = tp.paymentfrequencyid
+INNER JOIN Person per ON per.Id = tp.TenantId
 WHERE  (OwnerProperty.OwnerId = 1426)
 
 
