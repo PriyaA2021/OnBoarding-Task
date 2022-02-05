@@ -42,6 +42,12 @@ where ownerid = 1426
 
 
 ii) Display the yield. 
+SELECT pr.NAME, pf.YIELD
+FROM PROPERTY pr 
+INNER JOIN OWNERPROPERTY op ON pr.ID = op.PROPERTYID
+INNER JOIN PROPERTYFINANCE pf ON op.PropertyId = pf.PropertyId
+WHERE OWNERID = 1426
+
 
 
 
